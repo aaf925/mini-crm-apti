@@ -1,37 +1,36 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
-enum FacilityStatus {
+enum VendorStatus {
   IDENTIFICADO
-  CONTACTADO
+  PRIMERA_REUNION
+  DEMO_REALIZADA
   ESPERANDO_PRESUPUESTO
+  PRESUPUESTO_RECIBIDO
   NEGOCIANDO
-  CERRADO
+  SELECCIONADO
   DESCARTADO
 }
 
-model FacilityProvider {
-  id                    String         @id @default(uuid())
-  name                  String
+model ErpVendor {
+  id                    String       @id @default(uuid())
+  companyName           String
+  softwareProposed      String
   contactName           String
   email                 String
   phone                 String
-  status                FacilityStatus @default(IDENTIFICADO)
-  pitchTypes            String
-  estimatedPricePerHour Float?
+  status                VendorStatus @default(IDENTIFICADO)
+  estimatedCost         Float?
+  estimatedMonths       Float?
+  hostingType           String?
   internalOwner         String
-  notes                 String?        @db.Text
+  notes                 String?      @db.Text
   
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
 }

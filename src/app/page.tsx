@@ -1,100 +1,120 @@
-import { getFacilities } from './actions'
-import FacilityForm from '@/components/FacilityForm'
+import { getVendors } from './actions'
+import VendorForm from '@/components/VendorForm'
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-function getStatusBadge(status: string) {
+function getVendorStatusBadge(status: string) {
   const statusColors: Record<string, string> = {
     IDENTIFICADO: 'bg-slate-500',
-    CONTACTADO: 'bg-blue-500',
-    ESPERANDO_PRESUPUESTO: 'bg-yellow-500',
+    PRIMERA_REUNION: 'bg-indigo-500',
+    DEMO_REALIZADA: 'bg-blue-500',
+    ESPERANDO_PRESUPUESTO: 'bg-amber-500',
+    PRESUPUESTO_RECIBIDO: 'bg-cyan-500',
     NEGOCIANDO: 'bg-orange-500',
-    CERRADO: 'bg-emerald-500',
-    DESCARTADO: 'bg-red-500',
+    SELECCIONADO: 'bg-emerald-600',
+    DESCARTADO: 'bg-rose-600',
   }
-  return <Badge className={`${statusColors[status]} hover:${statusColors[status]}`}>{status}</Badge>
+  return <Badge className={`${statusColors[status]} hover:${statusColors[status]} text-white border-none shrink-0`}>{status.replace(/_/g, ' ')}</Badge>
 }
 
 export default async function Dashboard() {
-  // Llama directamente a la BD en el servidor
-  const facilities = await getFacilities()
+  const vendors = await getVendors()
   
-  // Calcular KPIs
-  const totalFacilities = facilities.length
-  const closedFacilities = facilities.filter(f => f.status === 'CERRADO').length
+  // KPIs
+  const totalVendors = vendors.length
+  
+  const totalCost = vendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0)
+  const averageCost = totalVendors > 0 ? (totalCost / totalVendors).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }) : '0 €'
+  
+  const finalPhaseCount = vendors.filter(v => v.status === 'NEGOCIANDO' || v.status === 'PRESUPUESTO_RECIBIDO').length
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-zinc-50 p-8 font-sans">
+      <div className="max-w-7xl mx-auto space-y-10">
         
-        {/* Cabecera */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">CRM de Proveedores</h1>
-            <p className="text-slate-500">Gestión de instalaciones deportivas</p>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 uppercase italic">Suministros El Parque</h1>
+            <p className="text-slate-600 font-medium tracking-wide">Evaluación de Proveedores Tecnológicos (Proyecto ERP)</p>
           </div>
-          <FacilityForm />
+          <VendorForm />
         </div>
 
         {/* KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-500">Total Instalaciones</CardTitle>
+          <Card className="border-l-4 border-l-slate-900 shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500">Proveedores Evaluados</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{totalFacilities}</div>
+              <div className="text-4xl font-black text-slate-900">{totalVendors}</div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-500">Acuerdos Cerrados</CardTitle>
+          <Card className="border-l-4 border-l-blue-600 shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500">Presupuesto Medio</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-emerald-600">{closedFacilities}</div>
+              <div className="text-4xl font-black text-blue-700">{averageCost}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-orange-500 shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500">En Fase Final / Selección</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-black text-orange-600">{finalPhaseCount}</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Tabla de Datos */}
-        <div className="rounded-md border bg-white shadow-sm">
+        {/* Technical Data Table */}
+        <div className="rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden">
+          <div className="bg-slate-900 text-white p-4 border-b border-slate-800">
+            <h2 className="text-sm font-bold uppercase tracking-wider">Matriz de Selección ERP</h2>
+          </div>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-slate-50">
               <TableRow>
-                <TableHead>Instalación</TableHead>
-                <TableHead>Contacto</TableHead>
-                <TableHead>Pistas</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Owner</TableHead>
-                <TableHead className="text-right">Añadido</TableHead>
+                <TableHead className="font-bold text-slate-800 py-4">Consultora / Integrador</TableHead>
+                <TableHead className="font-bold text-slate-800">Software Propuesto</TableHead>
+                <TableHead className="font-bold text-slate-800">Inversión Est.</TableHead>
+                <TableHead className="font-bold text-slate-800">Meses</TableHead>
+                <TableHead className="font-bold text-slate-800">Alojamiento</TableHead>
+                <TableHead className="font-bold text-slate-800">Estado</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {facilities.length === 0 ? (
+              {vendors.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center h-24 text-slate-500">
-                    No hay instalaciones registradas. Añade la primera.
+                  <TableCell colSpan={6} className="text-center h-48 text-slate-400 font-medium italic">
+                    Sin proveedores registrados en la base de datos ERP.
                   </TableCell>
                 </TableRow>
               ) : (
-                facilities.map((fac) => (
-                  <TableRow key={fac.id}>
-                    <TableCell className="font-medium">
-                      {fac.name}
-                      <div className="text-xs text-slate-500">{fac.email}</div>
+                vendors.map((v) => (
+                  <TableRow key={v.id} className="hover:bg-slate-50 transition-colors border-b last:border-none">
+                    <TableCell className="py-4">
+                      <div className="font-bold text-slate-900">{v.companyName}</div>
+                      <div className="text-[11px] text-slate-500 bg-slate-100 px-1 inline-block mt-1 font-mono uppercase tracking-tighter">{v.contactName}</div>
+                    </TableCell>
+                    <TableCell className="font-semibold text-blue-900">{v.softwareProposed}</TableCell>
+                    <TableCell className="font-mono text-slate-700">
+                      {v.estimatedCost ? v.estimatedCost.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }) : 'TBD'}
+                    </TableCell>
+                    <TableCell className="text-slate-600 font-medium">
+                      {v.estimatedMonths ? `${v.estimatedMonths} m` : '-'}
                     </TableCell>
                     <TableCell>
-                      {fac.contactName}
-                      <div className="text-xs text-slate-500">{fac.phone}</div>
+                      <span className="text-[10px] font-bold py-0.5 px-2 bg-zinc-100 border border-zinc-200 rounded text-zinc-700 uppercase">
+                        {v.hostingType || 'N/A'}
+                      </span>
                     </TableCell>
-                    <TableCell>{fac.pitchTypes}</TableCell>
-                    <TableCell>{getStatusBadge(fac.status)}</TableCell>
-                    <TableCell>{fac.internalOwner}</TableCell>
-                    <TableCell className="text-right">
-                      {new Date(fac.createdAt).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{getVendorStatusBadge(v.status)}</TableCell>
                   </TableRow>
                 ))
               )}

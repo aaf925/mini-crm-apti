@@ -2,42 +2,41 @@
 
 import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/prisma'
-import { FacilityStatus } from '@prisma/client'
+import { VendorStatus } from '@prisma/client'
 
-export async function getFacilities() {
+export async function getVendors() {
   try {
-    const facilities = await prisma.facilityProvider.findMany({
+    const vendors = await prisma.erpVendor.findMany({
       orderBy: { createdAt: 'desc' }
     })
-    return facilities
+    return vendors
   } catch (error) {
-    console.error("Error fetching facilities:", error)
+    console.error("Error fetching vendors:", error)
     throw new Error('Error al obtener los proveedores')
   }
 }
 
-export async function createFacility(formData: FormData) {
+export async function createVendor(data: any) {
   try {
-    const estimatedPrice = formData.get('estimatedPricePerHour') as string;
-
-    await prisma.facilityProvider.create({
+    await prisma.erpVendor.create({
       data: {
-        name: formData.get('name') as string,
-        contactName: formData.get('contactName') as string,
-        email: formData.get('email') as string,
-        phone: formData.get('phone') as string,
-        status: formData.get('status') as FacilityStatus,
-        pitchTypes: formData.get('pitchTypes') as string,
-        estimatedPricePerHour: estimatedPrice ? parseFloat(estimatedPrice) : null,
-        internalOwner: formData.get('internalOwner') as string,
-        notes: formData.get('notes') as string,
+        companyName: data.companyName,
+        softwareProposed: data.softwareProposed,
+        contactName: data.contactName,
+        email: data.email,
+        phone: data.phone,
+        status: data.status as VendorStatus,
+        estimatedCost: data.estimatedCost ? parseFloat(data.estimatedCost) : null,
+        estimatedMonths: data.estimatedMonths ? parseFloat(data.estimatedMonths) : null,
+        hostingType: data.hostingType,
+        internalOwner: data.internalOwner,
+        notes: data.notes,
       }
     })
 
-    // Refrescar el Dashboard para mostrar el nuevo proveedor
     revalidatePath('/')
   } catch (error) {
-    console.error("Error creating facility:", error)
-    throw new Error('Error al crear el proveedor')
+    console.error("Error creating vendor:", error)
+    throw new Error('Error al registrar el proveedor')
   }
 }
