@@ -18,19 +18,54 @@ enum VendorStatus {
 }
 
 model ErpVendor {
-  id                    String       @id @default(uuid())
+  id                    String          @id @default(uuid())
   companyName           String
   softwareProposed      String
   contactName           String
   email                 String
   phone                 String
-  status                VendorStatus @default(IDENTIFICADO)
+  status                VendorStatus    @default(IDENTIFICADO)
   estimatedCost         Float?
   estimatedMonths       Float?
   hostingType           String?
   internalOwner         String
-  notes                 String?      @db.Text
+  notes                 String?         @db.Text
   
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @updatedAt
+  // Technical Metrics
+  technicalFit          Float?          @default(0)
+  scalability           Float?          @default(0)
+  postSaleSupport       Float?          @default(0)
+  pricingValue          Float?          @default(0)
+
+  // Relations
+  timeline              TimelineEvent[]
+  
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+}
+
+model TimelineEvent {
+  id          String    @id @default(uuid())
+  vendorId    String
+  title       String
+  date        DateTime  @default(now())
+  icon        String?
+  status      String?
+  description String?   @db.Text
+  
+  vendor      ErpVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  password      String // Hashed
+  role          String?   @default("USER")
+  department    String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
