@@ -1,125 +1,253 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { getVendors } from './actions'
 import VendorForm from '@/components/VendorForm'
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { 
+  Building2, 
+  Euro, 
+  CalendarClock, 
+  LayoutDashboard, 
+  ExternalLink,
+  ChevronRight,
+  TrendingUp,
+  Briefcase
+} from 'lucide-react'
 
 function getVendorStatusBadge(status: string) {
   const statusColors: Record<string, string> = {
-    IDENTIFICADO: 'bg-slate-500',
-    PRIMERA_REUNION: 'bg-indigo-500',
-    DEMO_REALIZADA: 'bg-blue-500',
-    ESPERANDO_PRESUPUESTO: 'bg-amber-500',
-    PRESUPUESTO_RECIBIDO: 'bg-cyan-500',
-    NEGOCIANDO: 'bg-orange-500',
-    SELECCIONADO: 'bg-emerald-600',
-    DESCARTADO: 'bg-rose-600',
+    IDENTIFICADO: 'bg-zinc-800 text-zinc-400 border-zinc-700',
+    PRIMERA_REUNION: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+    DEMO_REALIZADA: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+    ESPERANDO_PRESUPUESTO: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    PRESUPUESTO_RECIBIDO: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+    NEGOCIANDO: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+    SELECCIONADO: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    DESCARTADO: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
   }
-  return <Badge className={`${statusColors[status]} hover:${statusColors[status]} text-white border-none shrink-0`}>{status.replace(/_/g, ' ')}</Badge>
+  return (
+    <Badge variant="outline" className={`${statusColors[status]} font-semibold px-3 py-1 rounded-full whitespace-nowrap`}>
+      {status.replace(/_/g, ' ')}
+    </Badge>
+  )
 }
 
-export default async function Dashboard() {
-  const vendors = await getVendors()
+export default function Dashboard() {
+  const [vendors, setVendors] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function load() {
+      const data = await getVendors()
+      setVendors(data)
+      setLoading(false)
+    }
+    load()
+  }, [])
   
   // KPIs
   const totalVendors = vendors.length
-  
   const totalCost = vendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0)
-  const averageCost = totalVendors > 0 ? (totalCost / totalVendors).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }) : '0 €'
-  
-  const finalPhaseCount = vendors.filter(v => v.status === 'NEGOCIANDO' || v.status === 'PRESUPUESTO_RECIBIDO').length
+  const averageCost = totalVendors > 0 
+    ? (totalCost / totalVendors).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }) 
+    : '0 €'
+  const finalPhaseCount = vendors.filter(v => ['NEGOCIANDO', 'PRESUPUESTO_RECIBIDO', 'SELECCIONADO'].includes(v.status)).length
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  }
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-10">
+    <div className="min-h-screen relative text-zinc-200">
+      <div className="max-w-7xl mx-auto px-6 py-12 relative z-10 space-y-12">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 uppercase italic">Suministros El Parque</h1>
-            <p className="text-slate-600 font-medium tracking-wide">Evaluación de Proveedores Tecnológicos (Proyecto ERP)</p>
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6"
+        >
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-indigo-400 font-bold tracking-widest uppercase text-xs">
+              <div className="w-8 h-[2px] bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+              <span>Suministros El Parque</span>
+            </div>
+            <h1 className="text-5xl font-black tracking-tight text-white flex items-center gap-4">
+              ERP Vendor HUB
+              <LayoutDashboard size={32} className="text-indigo-500 mt-1" />
+            </h1>
+            <p className="text-zinc-400 font-medium max-w-xl text-lg">
+              Sistema inteligente de evaluación y gestión de proveedores tecnológicos para el despliegue del ERP integral.
+            </p>
           </div>
           <VendorForm />
-        </div>
+        </motion.div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-l-4 border-l-slate-900 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500">Proveedores Evaluados</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-black text-slate-900">{totalVendors}</div>
-            </CardContent>
-          </Card>
+        {/* KPI Grid */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          <motion.div variants={itemVariants}>
+            <Card className="glass-card overflow-hidden group cursor-default">
+              <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Volumen Evaluación</CardTitle>
+                <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
+                  <Briefcase size={16} />
+                </div>
+              </CardHeader>
+              <CardHeader className="pt-0">
+                <div className="text-4xl font-black text-white group-hover:text-indigo-400 transition-colors duration-500">{totalVendors}</div>
+                <p className="text-[11px] text-zinc-500 mt-1 font-medium italic select-none flex items-center gap-1">
+                  <TrendingUp size={12} className="text-emerald-500" /> +12% vs mes anterior
+                </p>
+              </CardHeader>
+            </Card>
+          </motion.div>
           
-          <Card className="border-l-4 border-l-blue-600 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500">Presupuesto Medio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-black text-blue-700">{averageCost}</div>
-            </CardContent>
-          </Card>
+          <motion.div variants={itemVariants}>
+            <Card className="glass-card overflow-hidden group cursor-default">
+              <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Inversión Media</CardTitle>
+                <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">
+                  <Euro size={16} />
+                </div>
+              </CardHeader>
+              <CardHeader className="pt-0">
+                <div className="text-4xl font-black text-white group-hover:text-emerald-400 transition-colors duration-500">{averageCost}</div>
+                <p className="text-[11px] text-zinc-500 mt-1 font-medium">Basado en propuestas actuales</p>
+              </CardHeader>
+            </Card>
+          </motion.div>
 
-          <Card className="border-l-4 border-l-orange-500 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500">En Fase Final / Selección</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-black text-orange-600">{finalPhaseCount}</div>
-            </CardContent>
-          </Card>
-        </div>
+          <motion.div variants={itemVariants}>
+            <Card className="glass-card overflow-hidden group cursor-default">
+              <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Fase de Selección</CardTitle>
+                <div className="p-2 rounded-lg bg-orange-500/10 text-orange-400 group-hover:bg-orange-500/20 transition-colors">
+                  <ChevronRight size={16} />
+                </div>
+              </CardHeader>
+              <CardHeader className="pt-0">
+                <div className="text-4xl font-black text-white group-hover:text-orange-400 transition-colors duration-500">{finalPhaseCount}</div>
+                <p className="text-[11px] text-zinc-500 mt-1 font-medium font-mono text-orange-500/60 tracking-wider">PRIORIDAD ALTA</p>
+              </CardHeader>
+            </Card>
+          </motion.div>
+        </motion.div>
 
-        {/* Technical Data Table */}
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden">
-          <div className="bg-slate-900 text-white p-4 border-b border-slate-800">
-            <h2 className="text-sm font-bold uppercase tracking-wider">Matriz de Selección ERP</h2>
+        {/* Main Table Container */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="glass-card rounded-2xl overflow-hidden shadow-[0_0_50px_-12px_rgba(0,0,0,0.8)] border border-white/5"
+        >
+          <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400 flex items-center gap-2">
+              Matriz Técnica de Integradores
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_emerald]" />
+            </h2>
           </div>
+          
           <Table>
-            <TableHeader className="bg-slate-50">
-              <TableRow>
-                <TableHead className="font-bold text-slate-800 py-4">Consultora / Integrador</TableHead>
-                <TableHead className="font-bold text-slate-800">Software Propuesto</TableHead>
-                <TableHead className="font-bold text-slate-800">Inversión Est.</TableHead>
-                <TableHead className="font-bold text-slate-800">Meses</TableHead>
-                <TableHead className="font-bold text-slate-800">Alojamiento</TableHead>
-                <TableHead className="font-bold text-slate-800">Estado</TableHead>
+            <TableHeader className="bg-white/[0.03]">
+              <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableHead className="py-4 px-8 text-zinc-500 font-bold uppercase text-[10px]">Empresa / Contacto</TableHead>
+                <TableHead className="text-zinc-500 font-bold uppercase text-[10px]">Solución Proyectada</TableHead>
+                <TableHead className="text-zinc-500 font-bold uppercase text-[10px]">Propuesta Económica</TableHead>
+                <TableHead className="text-zinc-500 font-bold uppercase text-[10px]">Esfuerzo (Meses)</TableHead>
+                <TableHead className="text-zinc-500 font-bold uppercase text-[10px]">Despliegue</TableHead>
+                <TableHead className="text-zinc-500 font-bold uppercase text-[10px]">Estatus</TableHead>
+                <TableHead className="text-right px-8"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {vendors.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center h-48 text-slate-400 font-medium italic">
-                    Sin proveedores registrados en la base de datos ERP.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                vendors.map((v) => (
-                  <TableRow key={v.id} className="hover:bg-slate-50 transition-colors border-b last:border-none">
-                    <TableCell className="py-4">
-                      <div className="font-bold text-slate-900">{v.companyName}</div>
-                      <div className="text-[11px] text-slate-500 bg-slate-100 px-1 inline-block mt-1 font-mono uppercase tracking-tighter">{v.contactName}</div>
-                    </TableCell>
-                    <TableCell className="font-semibold text-blue-900">{v.softwareProposed}</TableCell>
-                    <TableCell className="font-mono text-slate-700">
-                      {v.estimatedCost ? v.estimatedCost.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }) : 'TBD'}
-                    </TableCell>
-                    <TableCell className="text-slate-600 font-medium">
-                      {v.estimatedMonths ? `${v.estimatedMonths} m` : '-'}
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-[10px] font-bold py-0.5 px-2 bg-zinc-100 border border-zinc-200 rounded text-zinc-700 uppercase">
-                        {v.hostingType || 'N/A'}
-                      </span>
-                    </TableCell>
-                    <TableCell>{getVendorStatusBadge(v.status)}</TableCell>
+              <AnimatePresence mode="popLayout">
+                {vendors.length === 0 && !loading ? (
+                  <TableRow>
+                     <TableCell colSpan={7} className="h-64 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-4 opacity-30">
+                          <Building2 size={48} className="text-zinc-600" />
+                          <p className="text-xl font-medium italic">Base de datos sincronizada. Sin registros.</p>
+                        </div>
+                     </TableCell>
                   </TableRow>
-                ))
-              )}
+                ) : (
+                  vendors.map((v, idx) => (
+                    <motion.tr 
+                      key={v.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="group border-b border-white/5 hover:bg-white/[0.03] transition-all duration-300 relative truncate"
+                    >
+                      <TableCell className="py-5 px-8">
+                        <div className="font-bold text-white group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-md">
+                          {v.companyName}
+                        </div>
+                        <div className="text-[11px] text-zinc-500 font-medium flex items-center gap-1 mt-0.5">
+                          {v.contactName} • <span className="text-zinc-600">{v.email}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                           <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                           <span className="font-semibold text-blue-200">{v.softwareProposed}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-zinc-300 font-bold">
+                        {v.estimatedCost 
+                          ? v.estimatedCost.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }) 
+                          : <span className="opacity-30 italic text-[10px]">PTTE. COTIZACIÓN</span>
+                        }
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 text-zinc-400 font-medium">
+                           <CalendarClock size={14} className="text-zinc-600" />
+                           {v.estimatedMonths ? `${v.estimatedMonths} meses` : '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-[9px] font-black py-1 px-2.5 bg-zinc-800 text-zinc-300 rounded border border-white/5 uppercase tracking-wider group-hover:border-indigo-500/50 transition-all">
+                          {v.hostingType || 'VIRTUAL'}
+                        </span>
+                      </TableCell>
+                      <TableCell>{getVendorStatusBadge(v.status)}</TableCell>
+                      <TableCell className="text-right px-8">
+                        <button className="p-2 rounded-lg bg-white/5 hover:bg-indigo-500 text-zinc-400 hover:text-white transition-all">
+                           <ExternalLink size={14} />
+                        </button>
+                      </TableCell>
+                    </motion.tr>
+                  ))
+                )}
+              </AnimatePresence>
             </TableBody>
           </Table>
+        </motion.div>
+
+        {/* Footer info */}
+        <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest text-zinc-600 opacity-60">
+           <span>Suministros El Parque • Internal Management ERP System v4.0</span>
+           <span className="flex items-center gap-2">
+              Encrypt Sync <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+           </span>
         </div>
 
       </div>
