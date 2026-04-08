@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/prisma'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { signOut } from "@/auth"
 
 export async function handleSignOut() {

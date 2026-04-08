@@ -2,8 +2,9 @@ import { getVendorById, getVendors } from "@/app/actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function VendorProfilePage({ params }: { params: { id: string } }) {
-  const vendor = await getVendorById(params.id);
+export default async function VendorProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const vendor = await getVendorById(id);
   if (!vendor) notFound();
 
   const ratings = [
