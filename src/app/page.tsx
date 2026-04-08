@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import NextImage from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getVendors } from './actions'
 import VendorForm from '@/components/VendorForm'
@@ -78,18 +79,30 @@ export default function Dashboard() {
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6"
+          className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8"
         >
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-indigo-400 font-bold tracking-widest uppercase text-xs">
-              <div className="w-8 h-[2px] bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-              <span>Suministros El Parque</span>
+          <div className="space-y-4">
+            <div className="flex items-center gap-6">
+              <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <NextImage 
+                  src="/logo.jpeg" 
+                  alt="Suministros El Parque Logo" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-3 text-indigo-400 font-bold tracking-widest uppercase text-[10px]">
+                  <div className="w-6 h-[1.5px] bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                  <span>Suministros El Parque</span>
+                </div>
+                <h1 className="text-4xl font-black tracking-tight text-white flex items-center gap-3">
+                  ERP Vendor HUB
+                  <LayoutDashboard size={28} className="text-indigo-500" />
+                </h1>
+              </div>
             </div>
-            <h1 className="text-5xl font-black tracking-tight text-white flex items-center gap-4">
-              ERP Vendor HUB
-              <LayoutDashboard size={32} className="text-indigo-500 mt-1" />
-            </h1>
-            <p className="text-zinc-400 font-medium max-w-xl text-lg">
+            <p className="text-zinc-500 font-medium max-w-xl text-md leading-relaxed">
               Sistema inteligente de evaluación y gestión de proveedores tecnológicos para el despliegue del ERP integral.
             </p>
           </div>
