@@ -47,8 +47,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center p-6 selection:bg-primary selection:text-on-primary w-full">
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden rounded-xl bg-surface-container-low border border-outline-variant/10 shadow-2xl">
+    <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center p-6 selection:bg-primary selection:text-on-primary w-full py-20">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-0 rounded-xl bg-surface-container-low border border-outline-variant/10 shadow-2xl">
         {/* Left Column: Vision */}
         <div className="lg:col-span-5 relative hidden lg:block overflow-hidden min-h-[600px]">
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-surface-container-low via-transparent to-transparent opacity-60"></div>

@@ -38,7 +38,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-surface text-on-surface font-sans selection:bg-primary/30 min-h-screen flex items-center justify-center relative overflow-hidden w-full">
+    <div className="bg-surface text-on-surface font-sans selection:bg-primary/30 min-h-screen flex items-center justify-center relative w-full py-20">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuCfj-XqME1u5Kg7GzzO52dAOhYV4xZjyxWbU1XbpHfQkPefnx-_ZZ2WxL0BfA4LyakNwEOgJoMiyNE_vGZWGJ2NeJfnWqLtHVjgdoXzb7aK4E8O3eeHCzbgcRRn3j-pKmP7VMdac7DtLoDMqvgMQI7mMYEQ4m24cdr0GmW8Gk9Rb3Ugf8JbJr_VCNqTrLPDDJrG2fGR8ox0jWwDBQBmUWDl-tF16XLejcuHnliNjZjHxs5UJh4dSDJCZRgQtKa5RJrhDn5y6msiWdsj')]"></div>
       <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full"></div>
