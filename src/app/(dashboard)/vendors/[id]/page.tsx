@@ -1,6 +1,7 @@
 import { getVendorById, getVendors } from "@/app/actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import TimelineSlideOver from "@/components/vendors/TimelineSlideOver";
 
 export default async function VendorProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -148,7 +149,7 @@ export default async function VendorProfilePage({ params }: { params: Promise<{ 
           {/* Timeline Column */}
           <div className="lg:col-span-4 glass-panel p-8 flex flex-col bg-surface-container-low">
                 <h3 className="text-sm font-black uppercase tracking-widest text-on-surface mb-8 italic outline-text">Activity Timeline</h3>
-                <div className="flex-1 space-y-8 relative">
+                <div className="flex-1 space-y-8 relative overflow-y-auto no-scrollbar max-h-[400px]">
                     <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-outline-variant/10"></div>
                     {vendor.timeline && vendor.timeline.length > 0 ? (
                       vendor.timeline.map((step, i) => (
@@ -160,7 +161,7 @@ export default async function VendorProfilePage({ params }: { params: Promise<{ 
                             }`}>
                                 <span className="material-symbols-outlined text-[12px]">{step.icon || "event"}</span>
                             </div>
-                            <div className="pb-2">
+                            <div className="pb-2 flex-1">
                                 <h4 className="text-xs font-black uppercase tracking-widest text-on-surface">
                                     {step.title}
                                 </h4>
@@ -168,7 +169,7 @@ export default async function VendorProfilePage({ params }: { params: Promise<{ 
                                     {new Date(step.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
                                 </p>
                                 {step.description && (
-                                  <p className="text-[9px] text-on-surface-variant/60 mt-1 max-w-[200px]">{step.description}</p>
+                                  <p className="text-[10px] text-on-surface-variant/70 mt-2 bg-surface-container-highest/20 p-2 rounded-lg border border-outline-variant/5">{step.description}</p>
                                 )}
                             </div>
                         </div>
@@ -177,11 +178,15 @@ export default async function VendorProfilePage({ params }: { params: Promise<{ 
                       <p className="text-[10px] text-on-surface-variant/40 italic uppercase tracking-widest text-center py-10">No activity recorded</p>
                     )}
                 </div>
-                <button className="mt-8 w-full py-4 rounded-2xl bg-surface-container-highest border border-outline-variant/10 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface hover:bg-primary hover:text-on-primary hover:border-transparent transition-all shadow-xl shadow-black/20">
+                <Link 
+                    href="?add_observation=true"
+                    className="mt-8 w-full py-4 rounded-2xl bg-surface-container-highest border border-outline-variant/10 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface hover:bg-primary hover:text-on-primary hover:border-transparent transition-all shadow-xl shadow-black/20 text-center"
+                >
                     Add Observation
-                </button>
+                </Link>
           </div>
       </div>
+      <TimelineSlideOver vendorId={vendor.id} />
     </div>
   );
 }

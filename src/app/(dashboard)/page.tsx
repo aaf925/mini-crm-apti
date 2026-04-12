@@ -1,11 +1,13 @@
-import { getVendors } from "@/app/actions";
+import { getRecentActivity, getVendors } from "@/app/actions";
 import Link from "next/link";
 
 export default async function DashboardPage() {
   const vendors = await getVendors();
+  const activities = await getRecentActivity(5);
 
   // KPI Calculations
   const totalVendors = vendors.length;
+// ... (lines 8-35 remain same)
   const avgCost = totalVendors > 0 
     ? vendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0) / totalVendors 
     : 0;
@@ -35,7 +37,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-8 space-y-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
-      {/* ... (Header and KPI Grid remain same) */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h2 className="text-4xl font-black tracking-tight text-on-surface">
@@ -83,80 +84,76 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        <div className="xl:col-span-2 glass-panel overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/30">
-            <div className="flex items-center gap-3">
-                <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                <h3 className="text-lg font-black tracking-tight text-on-surface uppercase">Estudio de Mercado Reciente</h3>
+        <div className="xl:col-span-2 space-y-8">
+            <div className="glass-panel overflow-hidden flex flex-col">
+              <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/30">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-6 bg-primary rounded-full"></div>
+                    <h3 className="text-lg font-black tracking-tight text-on-surface uppercase">Estudio de Mercado Reciente</h3>
+                </div>
+                <Link href="/evaluations" className="text-xs font-bold text-primary hover:underline flex items-center gap-1 group">
+                    Ver Todo <span className="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                </Link>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-surface-container-low/50">
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10">Consultora</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10">ERP Propuesto</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10">Presupuesto</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10 text-right">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-outline-variant/5">
+                    {vendors.slice(0, 6).map((vendor) => (
+                      <tr key={vendor.id} className="hover:bg-surface-container-highest/30 transition-colors group">
+                        <td className="px-6 py-5">
+                          <Link href={`/vendors/${vendor.id}`} className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded bg-surface-container flex items-center justify-center border border-outline-variant/10 group-hover:border-primary/30 transition-colors uppercase font-bold text-[10px]">
+                              {vendor.companyName.substring(0, 2)}
+                            </div>
+                            <span className="text-xs font-bold text-on-surface">{vendor.companyName}</span>
+                          </Link>
+                        </td>
+                        <td className="px-6 py-5 text-xs text-on-surface-variant font-medium">
+                          {vendor.softwareProposed}
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className="text-xs font-black text-on-surface tracking-tighter">
+                            {vendor.estimatedCost ? `$${vendor.estimatedCost.toLocaleString()}` : "N/A"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-5 text-right">
+                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-sm ${
+                            vendor.status === "SELECCIONADO" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                            vendor.status === "DESCARTADO" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
+                            "bg-primary/10 text-primary border border-primary/20"
+                          }`}>
+                            {vendor.status.replace(/_/g, " ")}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <Link href="/evaluations" className="text-xs font-bold text-primary hover:underline flex items-center gap-1 group">
-                Ver Todo <span className="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
-            </Link>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-surface-container-low/50">
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10">Consultora</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10">ERP Propuesto</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10">Presupuesto</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/10 text-right">Estado</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant/5">
-                {vendors.slice(0, 6).map((vendor) => (
-                  <tr key={vendor.id} className="hover:bg-surface-container-highest/30 transition-colors group">
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-surface-container flex items-center justify-center border border-outline-variant/10 group-hover:border-primary/30 transition-colors uppercase font-bold text-[10px]">
-                          {vendor.companyName.substring(0, 2)}
-                        </div>
-                        <span className="text-xs font-bold text-on-surface">{vendor.companyName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-xs text-on-surface-variant font-medium">
-                      {vendor.softwareProposed}
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="text-xs font-black text-on-surface tracking-tighter">
-                        {vendor.estimatedCost ? `$${vendor.estimatedCost.toLocaleString()}` : "N/A"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-sm ${
-                        vendor.status === "SELECCIONADO" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-                        vendor.status === "DESCARTADO" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
-                        "bg-primary/10 text-primary border border-primary/20"
-                      }`}>
-                        {vendor.status.replace(/_/g, " ")}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
-        <div className="glass-panel p-8 flex flex-col space-y-8 bg-gradient-to-br from-surface-container-low to-surface-container">
-            <h3 className="text-lg font-black tracking-tight text-on-surface uppercase flex items-center gap-3">
-                <span className="material-symbols-outlined text-secondary">security</span>
-                Audit Health
-            </h3>
-
-            <div className="space-y-6">
+            {/* Compliance Stats Box */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                     { label: "Technical Scoring", progress: Math.round(technicalHealth), color: "bg-primary" },
                     { label: "Financial Validation", progress: Math.round(financialValidation), color: "bg-secondary" },
                     { label: "Vendor Scalability", progress: Math.round(growthScalability), color: "bg-tertiary" }
                 ].map((item, i) => (
-                    <div key={i} className="space-y-2">
+                    <div key={i} className="glass-panel p-6 space-y-3">
                         <div className="flex justify-between items-end">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">{item.label}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant font-mono">{item.label}</span>
                             <span className="text-xs font-black text-on-surface">{item.progress}%</span>
                         </div>
-                        <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                        <div className="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
                             <div 
                                 className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out`} 
                                 style={{ width: `${item.progress}%` }}
@@ -165,17 +162,53 @@ export default async function DashboardPage() {
                     </div>
                 ))}
             </div>
+        </div>
 
-            <div className="mt-auto p-6 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/10 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-2">
-                    <span className="material-symbols-outlined text-primary/20 text-4xl group-hover:scale-110 transition-transform">verified_user</span>
+        <div className="space-y-8">
+            {/* Global Activity Feed */}
+            <div className="glass-panel p-6 flex flex-col bg-surface-container-low min-h-[400px]">
+                <h3 className="text-sm font-black tracking-tight text-on-surface uppercase flex items-center gap-3 mb-6">
+                    <span className="material-symbols-outlined text-primary">dynamic_feed</span>
+                    Actividad Global
+                </h3>
+                <div className="flex-1 space-y-6">
+                    {activities.length > 0 ? activities.map((activity: any, i) => (
+                        <div key={i} className="flex gap-4 group">
+                            <div className="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant/10 group-hover:border-primary/30 transition-colors">
+                                <span className="material-symbols-outlined text-xs text-primary">{activity.icon || 'history'}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h4 className="text-[11px] font-black text-on-surface tracking-tight uppercase leading-tight truncate">
+                                    {activity.vendor.companyName}
+                                </h4>
+                                <p className="text-[10px] font-bold text-on-surface-variant mt-0.5 truncate italic">
+                                    {activity.title}
+                                </p>
+                                <p className="text-[10px] text-on-surface-variant/50 mt-1">
+                                    {new Date(activity.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                                </p>
+                            </div>
+                        </div>
+                    )) : (
+                        <p className="text-[10px] text-on-surface-variant/40 italic uppercase tracking-widest text-center py-10">Sin actividad reciente</p>
+                    )}
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Compliance Alert</p>
-                <p className="text-xs text-on-surface font-medium leading-relaxed">
-                    {highQualityVendors} vendor{highQualityVendors !== 1 ? 's' : ''} currently exceed{highQualityVendors === 1 ? 's' : ''} the technical threshold of 7.5/10 units.
+                <Link href="/evaluations" className="mt-6 text-[10px] font-black uppercase tracking-widest text-primary text-center hover:underline">
+                    Ver todos los proveedores
+                </Link>
+            </div>
+
+            {/* Audit Alert */}
+            <div className="p-6 bg-gradient-to-br from-primary/10 to-primary-container/5 rounded-2xl border border-primary/10 relative overflow-hidden group">
+                <div className="absolute -bottom-2 -right-2 p-2 opacity-10">
+                    <span className="material-symbols-outlined text-primary text-8xl group-hover:scale-110 transition-transform">verified_user</span>
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Estado de Auditoría</p>
+                <p className="text-xs text-on-surface font-medium leading-relaxed relative z-10">
+                    {highQualityVendors} proveedor{highQualityVendors !== 1 ? 'es superan' : ' supera'} el umbral técnico de 7.5/10.
                 </p>
-                <button className="mt-4 text-[10px] font-bold text-on-surface underline hover:text-primary transition-colors">
-                    Download Full Audit Report
+                <button className="mt-4 text-[10px] font-bold text-on-surface underline hover:text-primary transition-colors relative z-10">
+                    Descargar Informe de Audit
                 </button>
             </div>
         </div>

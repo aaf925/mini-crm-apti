@@ -101,6 +101,11 @@ export async function createVendor(data: VendorData) {
 
 export async function updateVendor(id: string, data: VendorData) {
   try {
+    const oldVendor = await prisma.erpVendor.findUnique({
+      where: { id },
+      select: { status: true }
+    })
+
     const result = await prisma.erpVendor.update({
       where: { id },
       data: {
@@ -122,8 +127,19 @@ export async function updateVendor(id: string, data: VendorData) {
       }
     })
 
-    // Auto-create timeline event on status change?
-    // For now we'll just revalidate
+    // Auto-create timeline event on status change
+    if (oldVendor && oldVendor.status !== data.status) {
+      await prisma.timelineEvent.create({
+        data: {
+          vendorId: id,
+          title: "Cambio de Estado",
+          description: `El estado ha cambiado de ${oldVendor.status.replace(/_/g, ' ')} a ${data.status.replace(/_/g, ' ')}.`,
+          icon: "sync_alt",
+          status: data.status
+        }
+      })
+    }
+
     revalidatePath('/')
     revalidatePath('/evaluations')
     revalidatePath(`/vendors/${id}`)
@@ -185,9 +201,23 @@ export async function createTimelineEvent(vendorId: string, data: { title: strin
       }
     })
     revalidatePath(`/vendors/${vendorId}`)
+    revalidatePath('/')
     return event
   } catch (error) {
     console.error("Error creating timeline event:", error)
     throw new Error('Error al crear el evento de la línea de tiempo')
+  }
+}
+
+export async function getRecentActivity(limit = 6) {
+  try {
+    return await prisma.timelineEvent.findMany({
+      include: { vendor: true },
+      orderBy: { createdAt: 'desc' },
+      take: limit
+    })
+  } catch (error) {
+    console.error("Error fetching recent activity:", error)
+    throw new Error('Error al obtener la actividad reciente')
   }
 }
