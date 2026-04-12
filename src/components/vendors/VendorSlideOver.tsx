@@ -32,6 +32,7 @@ export default function VendorSlideOver() {
     phone: "",
     status: "IDENTIFICADO",
     estimatedCost: "",
+    estimatedMonths: "",
     internalOwner: "Alex Chen",
     notes: "",
     technicalFit: 0,
@@ -55,6 +56,7 @@ export default function VendorSlideOver() {
             phone: vendor.phone,
             status: vendor.status as VendorStatusType,
             estimatedCost: vendor.estimatedCost?.toString() || "",
+            estimatedMonths: vendor.estimatedMonths?.toString() || "",
             internalOwner: vendor.internalOwner,
             notes: vendor.notes || "",
             technicalFit: vendor.technicalFit || 0,
@@ -74,6 +76,7 @@ export default function VendorSlideOver() {
             phone: "",
             status: "IDENTIFICADO",
             estimatedCost: "",
+            estimatedMonths: "",
             internalOwner: "Alex Chen",
             notes: "",
             technicalFit: 0,
@@ -181,22 +184,40 @@ export default function VendorSlideOver() {
                     />
                   </div>
 
-                   {/* Budget */}
-                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">
-                      Presupuesto Estimado (USD)
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
-                      <input
-                        type="number"
-                        value={formData.estimatedCost || ""}
-                        onChange={(e) => setFormData({ ...formData, estimatedCost: e.target.value })}
-                        className="w-full bg-surface-container-highest border-none rounded-xl py-3 pl-8 pr-4 focus:ring-1 focus:ring-primary/40 focus:bg-surface-bright transition-all placeholder:text-on-surface-variant/40"
-                        placeholder="0.00"
-                      />
-                    </div>
-                  </div>
+                   {/* Budget & Time Grid */}
+                   <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">
+                            Presupuesto (USD)
+                            </label>
+                            <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
+                            <input
+                                type="number"
+                                value={formData.estimatedCost || ""}
+                                onChange={(e) => setFormData({ ...formData, estimatedCost: e.target.value })}
+                                className="w-full bg-surface-container-highest border-none rounded-xl py-3 pl-8 pr-4 focus:ring-1 focus:ring-primary/40 focus:bg-surface-bright transition-all placeholder:text-on-surface-variant/40 text-xs"
+                                placeholder="0.00"
+                            />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">
+                                Tiempo (Meses)
+                            </label>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold material-symbols-outlined text-sm">schedule</span>
+                                <input
+                                    type="number"
+                                    value={formData.estimatedMonths || ""}
+                                    onChange={(e) => setFormData({ ...formData, estimatedMonths: e.target.value })}
+                                    className="w-full bg-surface-container-highest border-none rounded-xl py-3 pl-10 pr-4 focus:ring-1 focus:ring-primary/40 focus:bg-surface-bright transition-all placeholder:text-on-surface-variant/40 text-xs"
+                                    placeholder="0"
+                                />
+                            </div>
+                        </div>
+                   </div>
 
                   {/* Status */}
                   <div className="space-y-2">
