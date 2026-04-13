@@ -6,11 +6,10 @@ import Image from "next/image";
 import { handleSignOut } from "@/app/actions";
 
 const navItems = [
-// ...
-  { name: "Overview", icon: "dashboard", href: "/" },
-  { name: "Evaluations", icon: "assessment", href: "/evaluations" },
-  { name: "Integrators", icon: "handshake", href: "/integrators" },
-  { name: "Settings", icon: "settings", href: "/settings" },
+  { name: "Panel General", icon: "dashboard", href: "/" },
+  { name: "Evaluaciones", icon: "assessment", href: "/evaluations" },
+  { name: "Integradores", icon: "handshake", href: "/integrators" },
+  { name: "Configuración", icon: "settings", href: "/settings" },
 ];
 
 export default function Sidebar({ user }: { user?: { name?: string | null, email?: string | null, department?: string | null, role?: string | null } }) {
@@ -71,7 +70,7 @@ export default function Sidebar({ user }: { user?: { name?: string | null, email
             <div className="overflow-hidden flex-1">
               <p className="text-xs font-bold text-on-surface truncate">{user?.name || "Auditor"}</p>
               <p className="text-[10px] text-on-surface-variant truncate">
-                {user?.department || user?.role || "General Auditor"}
+                {user?.department || user?.role || "Auditor General"}
               </p>
             </div>
             <form action={handleSignOut}>

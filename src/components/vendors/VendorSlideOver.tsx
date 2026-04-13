@@ -289,7 +289,7 @@ export default function VendorSlideOver() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-[9px] font-bold uppercase text-on-surface-variant flex justify-between">
-                                    Technical Fit <span>{formData.technicalFit}</span>
+                                    Ajuste Técnico <span>{formData.technicalFit}</span>
                                 </label>
                                 <input 
                                     type="range" min="0" max="10" step="0.5"
@@ -300,7 +300,7 @@ export default function VendorSlideOver() {
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[9px] font-bold uppercase text-on-surface-variant flex justify-between">
-                                    Scalability <span>{formData.scalability}</span>
+                                    Escalabilidad <span>{formData.scalability}</span>
                                 </label>
                                 <input 
                                     type="range" min="0" max="10" step="0.5"
@@ -311,7 +311,7 @@ export default function VendorSlideOver() {
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[9px] font-bold uppercase text-on-surface-variant flex justify-between">
-                                    Support <span>{formData.postSaleSupport}</span>
+                                    Soporte <span>{formData.postSaleSupport}</span>
                                 </label>
                                 <input 
                                     type="range" min="0" max="10" step="0.5"
@@ -322,7 +322,7 @@ export default function VendorSlideOver() {
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[9px] font-bold uppercase text-on-surface-variant flex justify-between">
-                                    Value <span>{formData.pricingValue}</span>
+                                    Valor <span>{formData.pricingValue}</span>
                                 </label>
                                 <input 
                                     type="range" min="0" max="10" step="0.5"

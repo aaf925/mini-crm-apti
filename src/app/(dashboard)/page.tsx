@@ -18,10 +18,10 @@ export default async function DashboardPage() {
   const selectionRate = totalVendors > 0 ? (selectedCount / totalVendors) * 100 : 0;
 
   const stats = [
-    { label: "Total Proposals", value: totalVendors, icon: "analytics", color: "text-primary" },
-    { label: "Avg Est. Cost", value: `$${(avgCost / 1000).toFixed(1)}k`, icon: "payments", color: "text-secondary" },
-    { label: "Avg Timeline", value: `${avgTime.toFixed(1)}m`, icon: "schedule", color: "text-tertiary" },
-    { label: "Selection Rate", value: `${selectionRate.toFixed(0)}%`, icon: "star", color: "text-emerald-400" },
+    { label: "PROPUESTAS TOTALES", value: totalVendors, icon: "analytics", color: "text-primary" },
+    { label: "COSTE MEDIO EST.", value: `$${(avgCost / 1000).toFixed(1)}k`, icon: "payments", color: "text-secondary" },
+    { label: "PLAZO MEDIO", value: `${avgTime.toFixed(1)}m`, icon: "schedule", color: "text-tertiary" },
+    { label: "TASA DE SELECCIÓN", value: `${selectionRate.toFixed(0)}%`, icon: "star", color: "text-emerald-400" },
   ];
 
   // Audit Health Calculations
@@ -40,18 +40,18 @@ export default async function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h2 className="text-4xl font-black tracking-tight text-on-surface">
-            Executive <span className="text-primary italic">Overview</span>
+            Resumen <span className="text-primary italic">Ejecutivo</span>
           </h2>
           <p className="text-on-surface-variant mt-2 font-medium tracking-wide flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Real-time Vendor Evaluation Metrics • Suministros El Parque
+            Métricas de Evaluación de Proveedores • Suministros El Parque
           </p>
         </div>
         
         <div className="flex items-center gap-3">
             <div className="bg-surface-container-high px-4 py-2 rounded-lg border border-outline-variant/10 flex items-center gap-3">
                 <span className="material-symbols-outlined text-on-surface-variant text-sm">calendar_today</span>
-                <span className="text-xs font-bold text-on-surface">March 2024 - Present</span>
+                <span className="text-xs font-bold text-on-surface">Marzo 2024 - Actualidad</span>
             </div>
             <button className="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant/10 flex items-center justify-center hover:bg-surface-bright transition-colors">
                 <span className="material-symbols-outlined text-on-surface-variant text-lg">download</span>
@@ -67,8 +67,8 @@ export default async function DashboardPage() {
               <div className={`w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                 <span className={`material-symbols-outlined ${stat.color} text-2xl`}>{stat.icon}</span>
               </div>
-              <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded tracking-tighter">
-                +12% vs LY
+              <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded tracking-tighter uppercase">
+                +12% VS AS
               </span>
             </div>
             <div>
@@ -144,9 +144,9 @@ export default async function DashboardPage() {
             {/* Compliance Stats Box */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                    { label: "Technical Scoring", progress: Math.round(technicalHealth), color: "bg-primary" },
-                    { label: "Financial Validation", progress: Math.round(financialValidation), color: "bg-secondary" },
-                    { label: "Vendor Scalability", progress: Math.round(growthScalability), color: "bg-tertiary" }
+                    { label: "Puntuación Técnica", progress: Math.round(technicalHealth), color: "bg-primary" },
+                    { label: "Validación Financiera", progress: Math.round(financialValidation), color: "bg-secondary" },
+                    { label: "Escalabilidad", progress: Math.round(growthScalability), color: "bg-tertiary" }
                 ].map((item, i) => (
                     <div key={i} className="glass-panel p-6 space-y-3">
                         <div className="flex justify-between items-end">
@@ -207,8 +207,8 @@ export default async function DashboardPage() {
                 <p className="text-xs text-on-surface font-medium leading-relaxed relative z-10">
                     {highQualityVendors} proveedor{highQualityVendors !== 1 ? 'es superan' : ' supera'} el umbral técnico de 7.5/10.
                 </p>
-                <button className="mt-4 text-[10px] font-bold text-on-surface underline hover:text-primary transition-colors relative z-10">
-                    Descargar Informe de Audit
+                <button className="mt-4 text-[10px] font-bold text-on-surface underline hover:text-primary transition-colors relative z-10 uppercase tracking-widest">
+                    Descargar Informe de Auditoría
                 </button>
             </div>
         </div>

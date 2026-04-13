@@ -5,7 +5,13 @@ import { usePathname } from "next/navigation";
 
 export default function Topbar() {
   const pathname = usePathname();
-  const pageName = pathname === "/" ? "Executive Overview" : pathname.split("/")[1].charAt(0).toUpperCase() + pathname.split("/")[1].slice(1);
+  const pageNames: Record<string, string> = {
+    "/": "Resumen Ejecutivo",
+    "/evaluations": "Evaluaciones Técnicas",
+    "/integrators": "Red de Integradores",
+    "/settings": "Configuración del Sistema",
+  };
+  const pageName = pageNames[pathname] || "Detalle de Proveedor";
 
   return (
     <header className="w-full h-16 flex items-center justify-between px-8 bg-slate-900/80 dark:bg-[#0b1326]/80 backdrop-blur-md sticky top-0 z-40 border-b border-outline-variant/10">
@@ -27,7 +33,7 @@ export default function Topbar() {
           <input
             type="text"
             className="bg-surface-container-highest/50 border-none rounded-lg py-1.5 pl-10 pr-4 text-xs focus:ring-1 focus:ring-primary/40 w-full placeholder:text-on-surface-variant/40 transition-all focus:bg-surface-container-high"
-            placeholder="Search evaluation criteria..."
+            placeholder="Buscar criterios de evaluación..."
           />
         </div>
       </div>

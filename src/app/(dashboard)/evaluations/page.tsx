@@ -86,7 +86,7 @@ export default async function EvaluationsPage() {
               {/* Progress Bar (Dynamic Audit Integrity) */}
               <div className="space-y-1.5">
                   <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
-                      <span>Audit Integrity</span>
+                      <span>Integridad de Auditoría</span>
                       <span>{Math.round(((vendor.technicalFit || 0) + (vendor.scalability || 0) + (vendor.postSaleSupport || 0) + (vendor.pricingValue || 0)) / 40 * 100)}%</span>
                   </div>
                   <div className="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
