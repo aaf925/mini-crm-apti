@@ -1,9 +1,19 @@
 import { getRecentActivity, getVendors } from "@/app/actions";
 import Link from "next/link";
+import DateFilter from "@/components/dashboard/DateFilter";
 
-export default async function DashboardPage() {
-  const vendors = await getVendors();
-  const activities = await getRecentActivity(5);
+export default async function DashboardPage({
+    searchParams
+}: {
+    searchParams: Promise<{ from?: string; to?: string }>
+}) {
+  const { from, to } = await searchParams;
+
+  const startDate = from ? new Date(from) : undefined;
+  const endDate = to ? new Date(to) : undefined;
+
+  const vendors = await getVendors(startDate, endDate);
+  const activities = await getRecentActivity(5, startDate, endDate);
 
   // KPI Calculations
   const totalVendors = vendors.length;
@@ -49,10 +59,7 @@ export default async function DashboardPage() {
         </div>
         
         <div className="flex items-center gap-3">
-            <div className="bg-surface-container-high px-4 py-2 rounded-lg border border-outline-variant/10 flex items-center gap-3">
-                <span className="material-symbols-outlined text-on-surface-variant text-sm">calendar_today</span>
-                <span className="text-xs font-bold text-on-surface">Marzo 2024 - Actualidad</span>
-            </div>
+            <DateFilter />
             <button className="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant/10 flex items-center justify-center hover:bg-surface-bright transition-colors">
                 <span className="material-symbols-outlined text-on-surface-variant text-lg">download</span>
             </button>

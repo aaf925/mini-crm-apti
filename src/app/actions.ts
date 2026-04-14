@@ -37,9 +37,17 @@ export interface VendorData {
   pricingValue?: number;
 }
 
-export async function getVendors() {
+export async function getVendors(startDate?: Date, endDate?: Date) {
   try {
+    const where: any = {};
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = startDate;
+      if (endDate) where.createdAt.lte = endDate;
+    }
+
     return await prisma.erpVendor.findMany({
+      where,
       orderBy: { createdAt: 'desc' }
     })
   } catch (error) {
@@ -209,10 +217,18 @@ export async function createTimelineEvent(vendorId: string, data: { title: strin
   }
 }
 
-export async function getRecentActivity(limit = 6) {
+export async function getRecentActivity(limit = 6, startDate?: Date, endDate?: Date) {
   try {
+    const where: any = {};
+    if (startDate || endDate) {
+      where.date = {};
+      if (startDate) where.date.gte = startDate;
+      if (endDate) where.date.lte = endDate;
+    }
+
     return await prisma.timelineEvent.findMany({
       include: { vendor: true },
+      where,
       orderBy: { createdAt: 'desc' },
       take: limit
     })
