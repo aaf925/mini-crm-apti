@@ -8,6 +8,7 @@ import { handleSignOut } from "@/app/actions";
 const navItems = [
   { name: "Panel General", icon: "dashboard", href: "/" },
   { name: "Evaluaciones", icon: "assessment", href: "/evaluations" },
+  { name: "Evaluación", icon: "scoreboard", href: "/scoring" },
   { name: "Integradores", icon: "handshake", href: "/integrators" },
   { name: "Configuración", icon: "settings", href: "/settings" },
 ];
