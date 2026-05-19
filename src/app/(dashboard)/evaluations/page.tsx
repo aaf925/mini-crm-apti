@@ -1,9 +1,22 @@
 import { getVendors, deleteVendor } from "@/app/actions";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { prisma } from "@/lib/prisma";
 
 export default async function EvaluationsPage() {
   const vendors = await getVendors();
+
+  // Pre-fetch last activity date for all vendors (avoid N+1)
+  const vendorIds = vendors.map(v => v.id)
+  const lastActivities = await Promise.all(vendorIds.map(id =>
+    prisma.timelineEvent.findFirst({
+      where: { vendorId: id },
+      orderBy: { date: "desc" },
+      select: { date: true },
+    })
+  ))
+  const activityMap = new Map<string, Date | null>()
+  vendorIds.forEach((id, i) => activityMap.set(id, lastActivities[i]?.date || null))
 
   return (
     <div className="p-8 space-y-8 max-w-[1600px] mx-auto animate-in slide-in-from-bottom-4 duration-700">
@@ -35,7 +48,9 @@ export default async function EvaluationsPage() {
 
       {/* Comparison Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {vendors.map((vendor) => (
+        {vendors.map((vendor) => {
+          const lastActivity = activityMap.get(vendor.id)
+          return (
           <div key={vendor.id} className="glass-panel group hover:border-primary/40 transition-all duration-500 overflow-hidden relative">
             <div className="p-6 space-y-6">
               {/* Card Header */}
@@ -58,9 +73,11 @@ export default async function EvaluationsPage() {
                     }`}>
                         {vendor.status.replace(/_/g, " ")}
                     </span>
-                    <span className="text-[10px] text-on-surface-variant/40 font-mono">
-                        #{vendor.id.substring(0, 4)}
-                    </span>
+                    {lastActivity && (
+                      <span className="text-[8px] text-on-surface-variant/40 font-medium whitespace-nowrap">
+                        {new Date(lastActivity).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
                 </div>
               </div>
 
@@ -121,7 +138,7 @@ export default async function EvaluationsPage() {
               </div>
             </div>
           </div>
-        ))}
+        )})}
 
         {/* Add Card */}
         <Link 

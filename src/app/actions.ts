@@ -200,12 +200,14 @@ export async function registerUser(formData: FormData) {
   }
 }
 
-export async function createTimelineEvent(vendorId: string, data: { title: string, description?: string, icon?: string, status?: string }) {
+export async function createTimelineEvent(vendorId: string, data: { title: string, description?: string, icon?: string, status?: string, date?: string }) {
   try {
+    const { date: dateStr, ...rest } = data
     const event = await prisma.timelineEvent.create({
       data: {
         vendorId,
-        ...data
+        ...rest,
+        ...(dateStr ? { date: new Date(dateStr) } : {}),
       }
     })
     revalidatePath(`/vendors/${vendorId}`)

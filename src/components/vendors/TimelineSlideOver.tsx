@@ -15,6 +15,7 @@ export default function TimelineSlideOver({ vendorId }: { vendorId: string }) {
     title: "",
     description: "",
     icon: "clinical_notes",
+    date: new Date().toISOString().split("T")[0],
   });
 
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function TimelineSlideOver({ vendorId }: { vendorId: string }) {
     params.delete("add_observation");
     const qs = params.toString();
     router.push(qs ? `?${qs}` : pathname);
-    setFormData({ title: "", description: "", icon: "clinical_notes" });
+    setFormData({ title: "", description: "", icon: "clinical_notes", date: new Date().toISOString().split("T")[0] });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,6 +115,20 @@ export default function TimelineSlideOver({ vendorId }: { vendorId: string }) {
                         </button>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Date */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant ml-1">
+                      Fecha del Evento
+                    </label>
+                    <input
+                      required
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="w-full bg-surface-container-highest border-none rounded-xl py-3 px-4 focus:ring-1 focus:ring-primary/40 focus:bg-surface-bright transition-all placeholder:text-on-surface-variant/40 font-bold"
+                    />
                   </div>
 
                   {/* Title */}
