@@ -15,17 +15,19 @@ export default async function DashboardPage({
   const vendors = await getVendors(startDate, endDate);
   const activities = await getRecentActivity(5, startDate, endDate);
 
-  // KPI Calculations
+  // Only consider evaluated vendors (with actual cost data) for KPI calculations
+  const evaluatedVendors = vendors.filter(v => v.status !== "DESCARTADO" && v.estimatedCost != null);
   const totalVendors = vendors.length;
-// ... (lines 8-35 remain same)
-  const avgCost = totalVendors > 0 
-    ? vendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0) / totalVendors 
+  const totalEvaluated = evaluatedVendors.length;
+
+  const avgCost = totalEvaluated > 0 
+    ? evaluatedVendors.reduce((acc, v) => acc + (v.estimatedCost || 0), 0) / totalEvaluated 
     : 0;
-  const avgTime = totalVendors > 0
-    ? vendors.reduce((acc, v) => acc + (v.estimatedMonths || 0), 0) / totalVendors
+  const avgTime = totalEvaluated > 0
+    ? evaluatedVendors.reduce((acc, v) => acc + (v.estimatedMonths || 0), 0) / totalEvaluated
     : 0;
   const selectedCount = vendors.filter(v => v.status === "SELECCIONADO").length;
-  const selectionRate = totalVendors > 0 ? (selectedCount / totalVendors) * 100 : 0;
+  const selectionRate = totalEvaluated > 0 ? (selectedCount / totalEvaluated) * 100 : 0;
 
   const stats = [
     { label: "PROPUESTAS TOTALES", value: totalVendors, icon: "analytics", color: "text-primary" },
@@ -34,16 +36,16 @@ export default async function DashboardPage({
     { label: "TASA DE SELECCIÓN", value: `${selectionRate.toFixed(0)}%`, icon: "star", color: "text-emerald-400" },
   ];
 
-  // Audit Health Calculations
-  const avgTech = totalVendors > 0 ? vendors.reduce((acc, v) => acc + (v.technicalFit || 0), 0) / totalVendors : 0;
-  const avgPricing = totalVendors > 0 ? vendors.reduce((acc, v) => acc + (v.pricingValue || 0), 0) / totalVendors : 0;
-  const avgScale = totalVendors > 0 ? vendors.reduce((acc, v) => acc + (v.scalability || 0), 0) / totalVendors : 0;
+  // Audit Health Calculations (only evaluated vendors)
+  const avgTech = totalEvaluated > 0 ? evaluatedVendors.reduce((acc, v) => acc + (v.technicalFit || 0), 0) / totalEvaluated : 0;
+  const avgPricing = totalEvaluated > 0 ? evaluatedVendors.reduce((acc, v) => acc + (v.pricingValue || 0), 0) / totalEvaluated : 0;
+  const avgScale = totalEvaluated > 0 ? evaluatedVendors.reduce((acc, v) => acc + (v.scalability || 0), 0) / totalEvaluated : 0;
 
   const technicalHealth = (avgTech / 10) * 100;
   const financialValidation = (avgPricing / 10) * 100;
   const growthScalability = (avgScale / 10) * 100;
 
-  const highQualityVendors = vendors.filter(v => (v.technicalFit || 0) >= 7.5).length;
+  const highQualityVendors = evaluatedVendors.filter(v => (v.technicalFit || 0) >= 7.5).length;
 
   return (
     <div className="p-8 space-y-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
@@ -114,7 +116,7 @@ export default async function DashboardPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-outline-variant/5">
-                    {vendors.slice(0, 6).map((vendor) => (
+                    {[...evaluatedVendors, ...vendors.filter(v => v.status === "DESCARTADO")].slice(0, 8).map((vendor) => (
                       <tr key={vendor.id} className="hover:bg-surface-container-highest/30 transition-colors group">
                         <td className="px-6 py-5">
                           <Link href={`/vendors/${vendor.id}`} className="flex items-center gap-3">
