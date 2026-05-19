@@ -220,6 +220,87 @@ export default async function DashboardPage({
             </div>
         </div>
       </div>
+
+      {/* CEO Dashboard — Decisión Final */}
+      <div className="glass-panel overflow-hidden border-t-4 border-emerald-500">
+        <div className="p-6 bg-gradient-to-r from-emerald-500/10 to-primary/5 border-b border-outline-variant/10">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="material-symbols-outlined text-emerald-400">workspace_premium</span>
+            <h2 className="text-lg font-black uppercase tracking-widest">Dashboard Ejecutivo · Decisión del CEO</h2>
+          </div>
+          <p className="text-[11px] text-on-surface-variant/70 italic">Suministros El Parque S.L. · Evaluación ERP · 14 de mayo de 2026</p>
+        </div>
+
+        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { pos: "1º", name: "Clave Informática", sol: "ERPClave", score: "91,88", cat: "PRIORITARIO", highlight: "PROXIMIDAD",
+              desc: "Almería · 35 años · sector agrícola", cost: "14.640 € año 1 · 5.340 €/año año 2+",
+              color: "emerald", ganador: true },
+            { pos: "2º", name: "Clavei", sol: "ClaveiGES PRO", score: "82,00", cat: "PRIORITARIO", highlight: "TRAYECTORIA",
+              desc: "41 años · 2.000 clientes · ISO 9001", cost: "15.593 € año 1 · 6.212 €/año año 2+",
+              color: "blue", ganador: false },
+            { pos: "3º", name: "STEL Order", sol: "BUSINESS", score: "71,50", cat: "RECOMENDADO", highlight: "COSTE Y VELOCIDAD",
+              desc: "Murcia · todo incluido · garantía 30 días", cost: "810 € año 1 · 900 €/año año 2+",
+              color: "amber", ganador: false },
+          ].map((f, i) => (
+            <div key={f.name} className={`glass-panel p-5 ${f.ganador ? "ring-2 ring-emerald-500/40 bg-emerald-500/5" : ""} relative`}>
+              {f.ganador && (
+                <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
+                  ADJUDICATARIO
+                </div>
+              )}
+              <div className="flex items-center gap-3 mb-3">
+                <span className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${
+                  i === 0 ? "bg-amber-500/20 text-amber-400" : i === 1 ? "bg-slate-400/20 text-slate-400" : "bg-amber-700/20 text-amber-700"
+                }`}>{f.pos}</span>
+                <div>
+                  <h3 className="text-sm font-black tracking-tight">{f.name}</h3>
+                  <p className="text-[9px] text-on-surface-variant/60 uppercase">{f.sol}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-2xl font-black text-emerald-400">{f.score}</span>
+                <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter ${
+                  f.cat === "PRIORITARIO" ? "text-emerald-400 bg-emerald-500/10" : "text-blue-400 bg-blue-500/10"
+                }`}>{f.cat}</span>
+              </div>
+              <p className="text-[9px] text-on-surface-variant/70 leading-relaxed">{f.desc}</p>
+              <p className="text-[9px] text-on-surface-variant/50 mt-1">{f.cost}</p>
+              <div className="mt-3 pt-3 border-t border-outline-variant/10">
+                <p className="text-[8px] font-black uppercase tracking-widest text-primary">Si priorizas: <span className="text-on-surface">{f.highlight}</span></p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Winner Announcement */}
+        <div className="mx-6 mb-6 p-6 bg-gradient-to-r from-emerald-500/20 to-emerald-500/5 rounded-2xl border border-emerald-500/20 text-center">
+          <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Decisión adoptada por la dirección · 14/05/2026</p>
+          <h3 className="text-2xl font-black tracking-tight text-on-surface mb-1">
+            ADJUDICATARIO: <span className="text-emerald-400">CLAVE INFORMÁTICA (ERPClave)</span>
+          </h3>
+          <p className="text-lg font-black text-emerald-400">91,88 / 100 · Aprobado por José A. (Dirección General)</p>
+          <p className="text-[10px] text-on-surface-variant/50 mt-3">
+            Equipo consultor APTI 2026: Alejandro · Juan · Miguel · Jorge · Antonio
+          </p>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="px-6 pb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: "Proveedores contactados", value: "43", sub: "3 oleadas: prioritarios, nacional, local" },
+            { label: "Propuestas formales", value: "10", sub: "Tasa 23,3% sobre contactados" },
+            { label: "Evaluados a fondo", value: "10", sub: "21 subcriterios · 6 criterios" },
+            { label: "Finalistas Top 3", value: "3", sub: "Tres opciones · la decisión es del CEO" },
+          ].map(s => (
+            <div key={s.label} className="glass-panel p-4 text-center">
+              <p className="text-2xl font-black text-primary">{s.value}</p>
+              <p className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/70 mt-1">{s.label}</p>
+              <p className="text-[8px] text-on-surface-variant/40 mt-1">{s.sub}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
