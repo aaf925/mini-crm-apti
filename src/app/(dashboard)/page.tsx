@@ -76,9 +76,7 @@ export default async function DashboardPage({
               <div className={`w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                 <span className={`material-symbols-outlined ${stat.color} text-2xl`}>{stat.icon}</span>
               </div>
-              <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded tracking-tighter uppercase">
-                +12% VS AS
-              </span>
+              
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 mb-1">
